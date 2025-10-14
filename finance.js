@@ -20,7 +20,27 @@ async function addExpense(spent, purpose, userId) {
   console.log("expense added");
 }
 // view financial summary
+async function viewSummary(userId) {
+  // total income  by user
+  const totalIncome = await prisma.Income.aggregate({
+    where: { userId: userId },
+    _sum: { amount: true },
+  });
 
+  // total expense by user
+  const totalExpense = await prisma.Expense.aggregate({
+    where: { userId: userId },
+    _sum: { spent: true },
+  });
+  //get balance
+  const income = totalIncome._sum.amount;
+  const expense = totalExpense._sum.spent;
+  const balance = income - expense;
+  //console
+  console.log("total income", income);
+  console.log("total expense", expense);
+  console.log("current balance", balance);
+}
 async function main() {
   // place for the prisma client queries
 }
