@@ -68,6 +68,10 @@ const filterByDate = async function (userId, startDate, endDate) {
 };
 async function main() {
   // place for the prisma client queries
+  //1. add income
+  await addIncome(20.5, "salary", 1);
+  await addExpense(5.64, "dinner", 1);
+  await viewSummary(1);
 }
 
 main()
