@@ -1,5 +1,4 @@
-const { PrismaClient } = require("./generated/prisma");
-const prisma = new PrismaClient();
+const prisma = require("./prisma-client");
 async function main() {
   // all the prisma client queries will be written here
   // create some new users
@@ -28,13 +27,13 @@ async function main() {
   //console.log(userIncome);
   //console.dir(userIncome, { depth: null });
   /// add data to the expense table
-  await prisma.Expense.createMany({
-    data: {
-      spent: 8.0,
-      purpose: "bought shoes",
-      userId: 1,
-    },
-  });
+  // await prisma.Expense.createMany({
+  //   data: {
+  //     spent: 8.0,
+  //     purpose: "bought shoes",
+  //     userId: 1,
+  //   },
+  // });
   const expense = await prisma.Expense.findMany();
   console.log(expense);
 }
