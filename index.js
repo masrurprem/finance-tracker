@@ -1,4 +1,4 @@
-const prisma = require("./generated/prisma");
+const prisma = require("./prisma-client");
 const prompts = require("prompts");
 
 // add income
@@ -31,7 +31,12 @@ const addIncome = async function () {
 
   // save to database
   await prisma.Income.create({
-    data: { ...res },
+    data: {
+      amount: res.amount,
+      source: res.source,
+      date: new Date(res.date),
+      userId: res.userId,
+    },
   });
   console.log(`Income of ${res.amount} from ${res.source} has been added`);
 };
@@ -65,7 +70,12 @@ const addExpense = async function () {
   const exp = await prompts(questions);
   //save to database
   await prisma.Expense.create({
-    data: { ...exp },
+    data: {
+      spent: exp.spent,
+      purpose: exp.purpose,
+      date: new Date(exp.date),
+      userId: exp.userId,
+    },
   });
   console.log(`Expense of ${exp.spent} from ${exp.purpose} has been added`);
 };
