@@ -1,5 +1,6 @@
 const prisma = require("./prisma-client");
 const prompts = require("prompts");
+const readlineSync = require("readline-sync");
 
 // add income
 const addIncome = async function () {
@@ -95,12 +96,50 @@ const viewSummary = async function (userId) {
   });
   // balance
   const balance = income._sum.amount - expense._sum.spent;
-  console.log(`current acoount balance of user ${userId} is, ${balance}`);
+  console.log(`current account balance of user ${userId} is, ${balance}`);
 };
 
 async function main() {
+  console.log("Welcome to Personal Finance Tracker!");
+  console.log(" What would you like to do?");
   // place for the prisma client queries
-  viewSummary(1);
+
+  while (true) {
+    const menu = {
+      type: "number",
+      name: "choice",
+      message: `
+    1. Add Income
+    2. Add Expense
+    3. View Financial Summary
+    4. Exit!
+    Please enter your choice(1-4):
+    `,
+      validate: (opt) =>
+        [1, 2, 3, 4].includes(opt) ? true : "choose option(1-4)",
+    };
+    // fetch user choice
+    const { choice } = await prompts(menu);
+    if (choice === 1) {
+      // add income
+      await addIncome();
+    } else if (choice === 2) {
+      //add expense
+      await addExpense();
+    } else if (choice === 3) {
+      // summary
+      const response = await prompts({
+        type: "number",
+        name: "id",
+        message: "your balance summary is one id away: ",
+      });
+
+      await viewSummary(response.id);
+    } else {
+      console.log("Goodbye! Thanks for using Personal Finance Tracker.");
+      break;
+    }
+  }
 }
 
 main()
