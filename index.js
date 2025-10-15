@@ -80,10 +80,27 @@ const addExpense = async function () {
   console.log(`Expense of ${exp.spent} from ${exp.purpose} has been added`);
 };
 
-//view summary
+//view summary of an user
+const viewSummary = async function (userId) {
+  //total income
+  const income = await prisma.Income.aggregate({
+    where: { userId },
+    _sum: { amount: true },
+  });
+
+  // total expenditure
+  const expense = await prisma.Expense.aggregate({
+    where: { userId },
+    _sum: { spent: true },
+  });
+  // balance
+  const balance = income._sum.amount - expense._sum.spent;
+  console.log(`current acoount balance of user ${userId} is, ${balance}`);
+};
 
 async function main() {
   // place for the prisma client queries
+  viewSummary(1);
 }
 
 main()
