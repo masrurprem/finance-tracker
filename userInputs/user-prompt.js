@@ -23,7 +23,7 @@ const incomeByDatePrompt = [
     message: "please enter end date(Y-M-D): ",
   },
 ];
-
+// total expense by date prompt
 expenseByDatePrompt = [
   {
     type: "number",
