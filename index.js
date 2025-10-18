@@ -6,7 +6,12 @@ const addExpense = require("./features/add-expense");
 const viewSummary = require("./features/view-summary");
 const totalIncomeByDate = require("./features/total-income-by-date");
 const totalExpenseByDate = require("./features/total-expense-by-date");
-
+// import user prompts
+const {
+  summaryPrompt,
+  incomeByDatePrompt,
+  expenseByDatePrompt,
+} = require("./userInputs/user-prompt");
 async function main() {
   console.log("Welcome to Personal Finance Tracker!");
   console.log(" What would you like to do?");
@@ -38,53 +43,17 @@ async function main() {
       await addExpense();
     } else if (choice === 3) {
       // summary
-      const response = await prompts({
-        type: "number",
-        name: "id",
-        message: "your balance summary is one id away: ",
-      });
+      const response = await prompts(summaryPrompt);
 
       await viewSummary(response.id);
     } else if (choice === 4) {
       // get user id to fetch its total income by date
-      const user = await prompts([
-        {
-          type: "number",
-          name: "id",
-          message: "please enter user id: ",
-        },
-        {
-          type: "text",
-          name: "start",
-          message: "please enter start date(Y-M-D): ",
-        },
-        {
-          type: "text",
-          name: "end",
-          message: "please enter end date(Y-M-D): ",
-        },
-      ]);
+      const user = await prompts(incomeByDatePrompt);
       // now fetch total income from data
       await totalIncomeByDate(user.id, user.start, user.end);
     } else if (choice === 5) {
-      // get user id to fetch its total income by date
-      const user = await prompts([
-        {
-          type: "number",
-          name: "id",
-          message: "please enter user id: ",
-        },
-        {
-          type: "text",
-          name: "start",
-          message: "please enter start date(Y-M-D): ",
-        },
-        {
-          type: "text",
-          name: "end",
-          message: "please enter end date(Y-M-D): ",
-        },
-      ]);
+      // get user id to fetch its total expense by date
+      const user = await prompts(expenseByDatePrompt);
       // now fetch total income from data
       await totalExpenseByDate(user.id, user.start, user.end);
     } else {
