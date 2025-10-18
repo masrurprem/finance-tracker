@@ -26,16 +26,16 @@ model User {
 
 model Income {
   id     Int      @id @default(autoincrement())
-  amount Decimal  @db.Decimal(10, 2)
+  amount Float
   source String   @db.VarChar(255)
   date   DateTime @default(now())
-  userId Int
+  userId Int      
   user   User     @relation(fields: [userId], references: [id])
 }
 
 model Expense {
   id      Int      @id @default(autoincrement())
-  spent   Decimal  @db.Decimal(10, 2)
+  spent   Float
   purpose String   @db.VarChar(200)
   date    DateTime @default(now())
   userId  Int

@@ -1,6 +1,5 @@
 const prisma = require("./prisma-client");
 const prompts = require("prompts");
-const readlineSync = require("readline-sync");
 
 // add income
 const addIncome = async function () {
@@ -99,6 +98,38 @@ const viewSummary = async function (userId) {
   console.log(`current account balance of user ${userId} is, ${balance}`);
 };
 
+// total income by date range based filtering
+const totalIncomeByDate = async function (userId, start, end) {
+  const income = await prisma.Income.aggregate({
+    where: {
+      userId,
+      date: {
+        gte: new Date(start),
+        lte: new Date(end),
+      },
+    },
+    _sum: { amount: true },
+  });
+  // return data to user
+  console.log(`Total income from ${start} to ${end}: ${income._sum.amount}`);
+};
+
+//total Expense by date range based filtering
+const totalExpenseByDate = async function (userId, start, end) {
+  const expense = await prisma.Expense.aggregate({
+    where: {
+      userId,
+      date: {
+        gte: new Date(start),
+        lte: new Date(end),
+      },
+    },
+    _sum: { spent: true },
+  });
+  // return data to the user
+  console.log(`Total expense from ${start} to ${end}: ${expense._sum.spent}`);
+};
+
 async function main() {
   console.log("Welcome to Personal Finance Tracker!");
   console.log(" What would you like to do?");
@@ -112,11 +143,13 @@ async function main() {
     1. Add Income
     2. Add Expense
     3. View Financial Summary
-    4. Exit!
-    Please enter your choice(1-4):
+    4. Total Income by Date
+    5. Total Expense by Date
+    6. Exit!
+    Please enter your choice(1-6):
     `,
       validate: (opt) =>
-        [1, 2, 3, 4].includes(opt) ? true : "choose option(1-4)",
+        [1, 2, 3, 4, 5, 6].includes(opt) ? true : "choose option(1-6)",
     };
     // fetch user choice
     const { choice } = await prompts(menu);
@@ -135,6 +168,48 @@ async function main() {
       });
 
       await viewSummary(response.id);
+    } else if (choice === 4) {
+      // get user id to fetch its total income by date
+      const user = await prompts([
+        {
+          type: "number",
+          name: "id",
+          message: "please enter user id: ",
+        },
+        {
+          type: "text",
+          name: "start",
+          message: "please enter start date(Y-M-D): ",
+        },
+        {
+          type: "text",
+          name: "end",
+          message: "please enter end date(Y-M-D): ",
+        },
+      ]);
+      // now fetch total income from data
+      await totalIncomeByDate(user.id, user.start, user.end);
+    } else if (choice === 5) {
+      // get user id to fetch its total income by date
+      const user = await prompts([
+        {
+          type: "number",
+          name: "id",
+          message: "please enter user id: ",
+        },
+        {
+          type: "text",
+          name: "start",
+          message: "please enter start date(Y-M-D): ",
+        },
+        {
+          type: "text",
+          name: "end",
+          message: "please enter end date(Y-M-D): ",
+        },
+      ]);
+      // now fetch total income from data
+      await totalExpenseByDate(user.id, user.start, user.end);
     } else {
       console.log("Goodbye! Thanks for using Personal Finance Tracker.");
       break;
